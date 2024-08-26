@@ -1,31 +1,29 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import SongsScreen from '../screens/SongsScreen';
 import { Ionicons } from '@expo/vector-icons';
+import SongsScreen from '../screens/SongsScreen';
+
+
 
 const Tab = createBottomTabNavigator();
 
-export default function TabNavigator() {
+const TabNavigator: React.FC = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName : keyof typeof Ionicons.glyphMap='musical-notes-outline';
-
-          if (route.name === 'Songs') {
-            iconName = focused ? 'musical-notes' : 'musical-notes-outline';
-          } else if (route.name === 'Favorites') {
-            iconName = focused ? 'heart' : 'heart-outline';
-          } else if (route.name === 'Playlists') {
-            iconName = focused ? 'list' : 'list-outline';
-          }
-
-          // Return any icon component from @expo/vector-icons
-          return <Ionicons name={iconName} size={size} color={color} />;
+        tabBarIcon: ({ color, size }) => {
+          return <Ionicons name='musical-notes' size={26} color='tomato' />;
         },
+
       })}
     >
-      <Tab.Screen name="Songs" component={SongsScreen} />
+      <Tab.Screen
+        name="Songs"
+        component={SongsScreen}
+        options={{ headerShown: false }}
+      />
     </Tab.Navigator>
   );
-}
+};
+
+export default TabNavigator;

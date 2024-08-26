@@ -1,73 +1,105 @@
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+// AudioPlayer.tsx
+import React, { useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import PlayerControls from './PlayerControls';
 import { Audio } from 'expo-av';
+import * as MediaLibrary from 'expo-media-library';
 
-interface AudioPlayerProps {
-  sound: Audio.Sound | null;
-  onNext: () => void;
-  onPrev: () => void;
-  onShuffle: () => void;
-  onRepeat: () => void;
-  isShuffle: boolean;
-  isRepeat: boolean;
-}
+const AudioPlayer = () => {
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [isShuffling, setIsShuffling] = useState(false);
+    const [isRepeating, setIsRepeating] = useState(false);
+    const [sound, setSound] = useState<Audio.Sound | null>(null);
+    const [audioFiles, setAudioFiles] = useState<MediaLibrary.Asset[]>([]);
+    const [currentAudioIndex, setCurrentAudioIndex] = useState<number | null>(null);
 
-export default function AudioPlayer({
-  sound,
-  onNext,
-  onPrev,
-  onShuffle,
-  onRepeat,
-  isShuffle,
-  isRepeat,
-}: AudioPlayerProps) {
-  const handlePlayPause = async () => {
-    if (sound) {
-      const status = await sound.getStatusAsync();
-      if (status.isLoaded && status.isPlaying) {
-        await sound.pauseAsync();
-      } else if (status.isLoaded) {
-        await sound.playAsync();
+    const playAudio = async (audioIndex: number) => {
+      const audio = audioFiles[audioIndex];
+      if (sound) {
+        await sound.unloadAsync();
       }
+      const { sound: newSound } = await Audio.Sound.createAsync(
+        { uri: audio.uri },
+        { shouldPlay: true }
+      );
+      setSound(newSound);
+      setCurrentAudioIndex(audioIndex);
+  
+      newSound.setOnPlaybackStatusUpdate((status) => {
+        if (status.isLoaded && status.didJustFinish) {
+          handleNext();  // Automatically play the next song
+        }
+      });
+  
+      await newSound.playAsync();
+    };
+
+    const handlePlayPause = async () => {
+      if (sound) {
+        const status = await sound.getStatusAsync();
+        if (status.isLoaded) {
+          if (status.isPlaying) {
+            await sound.pauseAsync();
+            setIsPlaying(false);
+          } else {
+            await sound.playAsync();
+            setIsPlaying(true);
+          }
+        }
+      }
+    };
+
+  const handleNext = () => {
+    if (isShuffling) {
+      const randomIndex = Math.floor(Math.random() * audioFiles.length);
+      playAudio(randomIndex);
+    } else if (currentAudioIndex !== null && currentAudioIndex < audioFiles.length - 1) {
+      playAudio(currentAudioIndex + 1);
+    } else if (isRepeating) {
+      playAudio(0);  // Repeat from the start
     }
   };
-  return (
-    <View style={styles.playerContainer}>
-      <TouchableOpacity onPress={onPrev}>
-        <Ionicons name="play-skip-back" size={32} color="black" />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handlePlayPause}>
-        <Ionicons name="play-circle" size={64} color="black" />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={onNext}>
-        <Ionicons name="play-skip-forward" size={32} color="black" />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={onShuffle}>
-        <Ionicons
-          name={isShuffle ? "shuffle" : "shuffle-outline"}
-          size={32}
-          color={isShuffle ? "tomato" : "black"}
-        />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={onRepeat}>
-        <Ionicons
-          name={isRepeat ? "repeat" : "repeat-outline"}
-          size={32}
-          color={isRepeat ? "tomato" : "black"}
-        />
-      </TouchableOpacity>
-    </View>
-  );
-}
+
+  const handlePrev = () => {
+    if (isShuffling) {
+      const randomIndex = Math.floor(Math.random() * audioFiles.length);
+      playAudio(randomIndex);
+    } else if (currentAudioIndex !== null && currentAudioIndex > 0) {
+      playAudio(currentAudioIndex - 1);
+    } else if (isRepeating) {
+      playAudio(audioFiles.length - 1);  // Repeat from the last
+    }
+  };
+
+    const toggleShuffle = () => {
+        setIsShuffling(!isShuffling);
+    };
+
+    const toggleRepeat = () => {
+        setIsRepeating(!isRepeating);
+    };
+
+    return (
+        <View style={styles.container}>
+            <PlayerControls
+                isPlaying={isPlaying}
+                isShuffling={isShuffling}
+                isRepeating={isRepeating}
+                handlePlayPause={handlePlayPause}
+                handleNext={handleNext}
+                handlePrev={handlePrev}
+                toggleShuffle={toggleShuffle}
+                toggleRepeat={toggleRepeat}
+            />
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
-  playerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    padding: 10,
-    backgroundColor:'#00FFAE',
-    borderRadius:50
-  },
+    container: {
+        padding: 20,
+        backgroundColor: '#fff',
+    },
 });
+
+export default AudioPlayer;

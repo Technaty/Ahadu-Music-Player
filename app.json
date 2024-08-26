@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Ahadu-Player",
-    "slug": "Ahadu-Player",
+    "slug": "ahadu-player",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,10 +18,24 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.technaty.ahaduplayer",
+      "versionCode": 1,
+      "permissions": [],
+      "web": {
+        "favicon": "./assets/favicon.png"
+      },
+      "extra": {
+        "eas": {
+          "projectId": "0323bc91-864f-4c45-a99b-7be6053a9318"
+        }
+      },
+      "owner": "technaty"
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
+    "extra": {
+      "eas": {
+        "projectId": "0323bc91-864f-4c45-a99b-7be6053a9318"
+      }
     }
   }
 }
