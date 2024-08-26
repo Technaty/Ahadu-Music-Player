@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Ahadu-Player",
-    "slug": "ahadu-player",
+    "slug": "music-player",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -34,8 +34,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "0323bc91-864f-4c45-a99b-7be6053a9318"
+        "projectId": "83a94513-8847-4c9b-bd24-f15ab745716b"
       }
-    }
+    },
+    "owner": "technaty"
   }
 }
