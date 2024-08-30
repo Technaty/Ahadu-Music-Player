@@ -4,8 +4,11 @@ import * as MediaLibrary from 'expo-media-library';
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
 import PlayerControls from '../components/PlayerControls';
 import PlayerProgressBar from '../components/PlayerProgressBar'; // Import PlayerProgressBar
+import TrackPlayer from 'react-native-track-player'
+import { playbackService } from '../components/playbackService'
 
 
+TrackPlayer.registerPlaybackService(() => playbackService)
 
 export default function SongsScreen() {
     const [isPlaying, setIsPlaying] = useState(false);
@@ -29,6 +32,7 @@ export default function SongsScreen() {
                 playThroughEarpieceAndroid: false,
             });
         };
+
         async function loadAudioFiles() {
             const { status } = await MediaLibrary.requestPermissionsAsync();
             if (status === 'granted') {
