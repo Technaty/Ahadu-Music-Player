@@ -8,7 +8,7 @@ install expo go on your mobile phone
 
 scan qrcode  enjoy Ahadu-Player
 
-Use this link to download apk file
+Use this link to download apk file(https://expo.dev/accounts/technaty/projects/music-player/builds/1f539d55-48ab-4e42-944b-80f586c9ec85)
 
 
 
